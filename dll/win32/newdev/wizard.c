@@ -780,6 +780,16 @@ CHSourceDlgProc(
 }
 
 static INT_PTR CALLBACK
+CHClassHWDlgProc(
+    IN HWND hwndDlg,
+    IN UINT uMsg,
+    IN WPARAM wParam,
+    IN LPARAM lParam)
+{
+    /* FIXME */
+    return FALSE;
+}
+static INT_PTR CALLBACK
 SearchDrvDlgProc(
     IN HWND hwndDlg,
     IN UINT uMsg,
@@ -1399,6 +1409,13 @@ DisplayWizard(
     psp.pfnDlgProc = CHSourceDlgProc;
     psp.pszTemplate = MAKEINTRESOURCE(IDD_CHSOURCE);
     ahpsp[IDD_CHSOURCE-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
+
+    /* Create the Select Class Hardware page */
+    psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;
+    psp.pszHeaderTitle = MAKEINTRESOURCE(IDS_CHCLASSHW_TITLE);
+    psp.pfnDlgProc = CHClassHWDlgProc;
+    psp.pszTemplate = MAKEINTRESOURCE(IDD_CHCLASSHW);
+    ahpsp[IDD_CHCLASSHW-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
 
     /* Create the Search driver page */
     psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;
