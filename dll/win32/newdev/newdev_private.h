@@ -22,6 +22,8 @@
 #include <wine/debug.h>
 WINE_DEFAULT_DEBUG_CHANNEL(newdev);
 
+#define MAX_STR_SIZE 255
+
 #include "resource.h"
 
 extern HINSTANCE hDllInstance;

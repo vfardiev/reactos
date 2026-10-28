@@ -25,7 +25,10 @@
 #include <shlobj.h>
 #include <shlwapi.h>
 
+HINSTANCE hApplet = NULL;
+SP_CLASSIMAGELIST_DATA ImageListData;
 HANDLE hThread;
+HDEVINFO hDevInfoTypes;
 
 static VOID
 CenterWindow(
@@ -659,8 +662,12 @@ CHSourceDlgProc(
             AutoDriver(hwndDlg, TRUE);
             IncludePath(hwndDlg, FALSE);
 
-            /* Disable manual driver choice for now */
-            EnableWindow(GetDlgItem(hwndDlg, IDC_RADIO_CHOOSE), FALSE);
+            SendDlgItemMessage(
+                hwndDlg,
+                IDC_RADIO_CHOOSE,
+                BM_SETCHECK,
+                (WPARAM)FALSE,
+                (LPARAM)0);
 
             break;
         }
@@ -762,7 +769,7 @@ CHSourceDlgProc(
                     }
                     else
                     {
-                        /* FIXME */;
+                        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_HWTYPESPAGE);
                     }
                     return TRUE;
 
@@ -779,16 +786,222 @@ CHSourceDlgProc(
     return FALSE;
 }
 
+static INT
+EnumDeviceClasses(INT ClassIndex,
+                  LPWSTR DevClassName,
+                  LPWSTR DevClassDesc,
+                  BOOL *DevPresent,
+                  INT *ClassImage)
+{
+    GUID ClassGuid;
+    HKEY KeyClass;
+    WCHAR ClassName[MAX_STR_SIZE];
+    DWORD RequiredSize = MAX_STR_SIZE;
+    UINT Ret;
+
+    *DevPresent = FALSE;
+    *DevClassName = L'\0';
+
+    Ret = CM_Enumerate_Classes(ClassIndex,
+                               &ClassGuid,
+                               0);
+    if (Ret != CR_SUCCESS)
+    {
+        /* All classes enumerated */
+        if(Ret == CR_NO_SUCH_VALUE)
+        {
+            hDevInfoTypes = NULL;
+            return -1;
+        }
+
+        if (Ret == CR_INVALID_DATA)
+        {
+            ; /* FIXME: What should we do here? */
+        }
+
+        /* Handle other errors... */
+    }
+	
+    /* Get the device image List */
+    ImageListData.cbSize = sizeof(ImageListData);
+    SetupDiGetClassImageList(&ImageListData);
+
+    if (SetupDiClassNameFromGuid(&ClassGuid,
+                                 ClassName,
+                                 RequiredSize,
+                                 &RequiredSize))
+    {
+        lstrcpy(DevClassName, ClassName);
+    }
+
+    if (!SetupDiGetClassImageIndex(&ImageListData,
+                                   &ClassGuid,
+                                   ClassImage))
+    {
+        /* FIXME: Can we do this?
+         * Set the blank icon: IDI_SETUPAPI_BLANK = 41
+         * It'll be image 24 in the imagelist */
+        *ClassImage = 24;
+    }
+
+    /* Get device info for all devices of a particular class */
+    hDevInfoTypes = SetupDiGetClassDevs(&ClassGuid,
+                                   NULL,
+                                   NULL,
+                                   DIGCF_PRESENT);
+    if (hDevInfoTypes == INVALID_HANDLE_VALUE)
+    {
+        hDevInfoTypes = NULL;
+        return 0;
+    }
+
+    KeyClass = SetupDiOpenClassRegKeyEx(&ClassGuid,
+                                        MAXIMUM_ALLOWED,
+                                        DIOCR_INSTALLER,
+                                        NULL,
+                                        0);
+    if (KeyClass != INVALID_HANDLE_VALUE)
+    {
+
+        LONG dwSize = MAX_STR_SIZE;
+
+        if (RegQueryValue(KeyClass,
+                          NULL,
+                          DevClassDesc,
+                          &dwSize) != ERROR_SUCCESS)
+        {
+            *DevClassDesc = L'\0';
+        }
+    }
+    else
+    {
+        return -3;
+    }
+
+    *DevPresent = TRUE;
+
+    RegCloseKey(KeyClass);
+
+    return 0;
+}
+
+static VOID
+InitHardWareTypesPage(HWND hwndDlg)
+{
+    HWND hList = GetDlgItem(hwndDlg, IDC_HWTYPESLIST);
+    WCHAR DevName[MAX_STR_SIZE],DevDesc[MAX_STR_SIZE],
+          FirstStr[MAX_STR_SIZE];
+    BOOL DevExist = FALSE;
+    INT ClassRet, DevImage, Index = 0;
+    LV_COLUMN Column;
+    LV_ITEM Item;
+    RECT Rect;
+
+    if (!hList) return;
+
+    ZeroMemory(&Column, sizeof(LV_COLUMN));
+
+    GetClientRect(hList, &Rect);
+
+    Column.mask         = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+    Column.fmt          = LVCFMT_LEFT;
+    Column.iSubItem     = 0;
+    Column.pszText      = NULL;
+    Column.cx           = Rect.right - GetSystemMetrics(SM_CXVSCROLL);
+    (VOID) ListView_InsertColumn(hList, 0, &Column);
+
+    ZeroMemory(&Item, sizeof(LV_ITEM));
+    
+	LoadString(hApplet, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
+
+    Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
+    Item.pszText    = (LPWSTR) FirstStr;
+    Item.iItem      = (INT) ListView_GetItemCount(hList);
+    Item.iImage     = -1;
+    (VOID) ListView_InsertItem(hList, &Item);
+	
+	hDevInfoTypes = SetupDiGetClassDevsEx(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT, NULL, NULL, 0);
+
+    if (hDevInfoTypes == INVALID_HANDLE_VALUE) return;
+	
+    do
+    {
+        ClassRet = EnumDeviceClasses(Index,
+                                     DevName,
+                                     DevDesc,
+                                     &DevExist,
+                                     &DevImage);
+
+        if ((ClassRet != -1) && (DevExist))
+        {
+            Item.mask   = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
+            Item.iItem  = Index;
+            Item.iImage = DevImage;
+
+            if (DevDesc[0] != L'\0')
+                Item.pszText = (LPWSTR) DevDesc;
+            else
+                Item.pszText = (LPWSTR) DevName;
+
+            (VOID) ListView_InsertItem(hList, &Item);
+
+            /* Kill InfoList initialized in EnumDeviceClasses */
+            if (hDevInfoTypes)
+            {
+                SetupDiDestroyDeviceInfoList(hDevInfoTypes);
+                hDevInfoTypes = NULL;
+            }
+        }
+        Index++;
+    }
+    while (ClassRet != -1);
+
+    (VOID) ListView_SetImageList(hList, ImageListData.ImageList, LVSIL_SMALL);
+}
+
 static INT_PTR CALLBACK
-CHClassHWDlgProc(
+CHTypeHWDlgProc(
     IN HWND hwndDlg,
     IN UINT uMsg,
     IN WPARAM wParam,
     IN LPARAM lParam)
 {
-    /* FIXME */
-    return FALSE;
+	switch (uMsg)
+	{
+		case WM_INITDIALOG:
+		{		
+			InitHardWareTypesPage(hwndDlg);
+		}
+		break;
+		
+		case WM_NOTIFY:
+		{
+			LPNMHDR lpnm = (LPNMHDR)lParam;
+
+            switch (lpnm->code)
+			{
+			    case PSN_SETACTIVE:
+                    /* Enable the Next and Back buttons */
+                    PropSheet_SetWizButtons(GetParent(hwndDlg), PSWIZB_NEXT | PSWIZB_BACK);
+                    break;
+					
+			    case PSN_WIZNEXT:
+                 /* Handle a Next button click, if necessary */
+				    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_FINISHPAGE);
+					break;
+				case PSN_WIZBACK:
+                    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_CHSOURCE);
+					break;
+			}
+			return TRUE;
+		default:
+                break;
+		}
+		
+	}
+return FALSE;
 }
+
 static INT_PTR CALLBACK
 SearchDrvDlgProc(
     IN HWND hwndDlg,
@@ -1410,12 +1623,12 @@ DisplayWizard(
     psp.pszTemplate = MAKEINTRESOURCE(IDD_CHSOURCE);
     ahpsp[IDD_CHSOURCE-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
 
-    /* Create the Select Class Hardware page */
+    /* Create the Select Type Hardware page */
     psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;
-    psp.pszHeaderTitle = MAKEINTRESOURCE(IDS_CHCLASSHW_TITLE);
-    psp.pfnDlgProc = CHClassHWDlgProc;
-    psp.pszTemplate = MAKEINTRESOURCE(IDD_CHCLASSHW);
-    ahpsp[IDD_CHCLASSHW-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
+    psp.pszHeaderTitle = MAKEINTRESOURCE(IDS_HWTYPES_TITLE);
+    psp.pfnDlgProc = CHTypeHWDlgProc;
+    psp.pszTemplate = MAKEINTRESOURCE(IDD_HWTYPESPAGE);
+    ahpsp[IDD_HWTYPESPAGE-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
 
     /* Create the Search driver page */
     psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;

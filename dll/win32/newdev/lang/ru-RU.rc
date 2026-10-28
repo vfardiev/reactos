@@ -48,6 +48,16 @@ BEGIN
     COMBOBOX IDC_COMBO_PATH, 61, 71, 176, 12, CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP | CBS_AUTOHSCROLL
 END
 
+IDD_HWTYPESPAGE DIALOGEX 0, 0, 317, 143
+STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
+CAPTION "Мастер нового оборудования"
+FONT 8, "MS Shell Dlg"
+BEGIN
+    LTEXT "Если нужный вам тип оборудования отсутствует, щелкните элемент списка ""Показать все устройства"".", IDC_STATIC, 21, 9, 275, 18
+    LTEXT "&Стандартные типы оборудования:", IDC_STATIC, 21, 31, 180, 8
+    CONTROL "", IDC_HWTYPESLIST, "SysListView32", WS_BORDER | WS_GROUP | WS_TABSTOP | LVS_REPORT | LVS_NOSORTHEADER | LVS_SINGLESEL | LVS_SHAREIMAGELISTS | LVS_NOCOLUMNHEADER, 21, 42, 275, 92
+END
+
 IDD_SEARCHDRV DIALOGEX 0, 0, 317, 143
 STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "Мастер нового оборудования"
@@ -94,4 +104,6 @@ BEGIN
     IDS_SEARCHDRV_TITLE "Поиск..."
     IDS_INSTALLDRV_TITLE "Установка..."
     IDS_BROWSE_FOR_FOLDER_TITLE "Выберите папку, содержащую подходящие драйверы для этого оборудования."
+	IDS_HWTYPES_TITLE "Выберите тип устанавливаемого оборудования из списка."
+	IDS_SHOWALLHW "Показать все устройства"
 END
