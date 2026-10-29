@@ -912,7 +912,7 @@ InitHardWareTypesPage(HWND hwndDlg)
 
     ZeroMemory(&Item, sizeof(LV_ITEM));
     
-	LoadString(hApplet, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
+	LoadString(hDllInstance, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
 
     Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
     Item.pszText    = (LPWSTR) FirstStr;
@@ -931,7 +931,7 @@ InitHardWareTypesPage(HWND hwndDlg)
                                      DevDesc,
                                      &DevExist,
                                      &DevImage);
-
+        Index++;
         if ((ClassRet != -1) && (DevExist))
         {
             Item.mask   = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
@@ -952,7 +952,6 @@ InitHardWareTypesPage(HWND hwndDlg)
                 hDevInfoTypes = NULL;
             }
         }
-        Index++;
     }
     while (ClassRet != -1);
 

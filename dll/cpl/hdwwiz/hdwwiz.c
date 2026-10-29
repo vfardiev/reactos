@@ -651,6 +651,7 @@ InitHardWareTypesPage(HWND hwndDlg)
     HWND hList = GetDlgItem(hwndDlg, IDC_HWTYPESLIST);
     WCHAR DevName[MAX_STR_SIZE];
     WCHAR DevDesc[MAX_STR_SIZE];
+	WCHAR FirstStr[MAX_STR_SIZE];
     BOOL DevExist = FALSE;
     INT ClassRet, DevImage, Index = 0;
     LV_COLUMN Column;
@@ -671,6 +672,18 @@ InitHardWareTypesPage(HWND hwndDlg)
     (VOID) ListView_InsertColumn(hList, 0, &Column);
 
     ZeroMemory(&Item, sizeof(LV_ITEM));
+	
+	LoadString(hApplet, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
+	
+	Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
+    Item.pszText    = (LPWSTR) FirstStr;
+    Item.iItem      = (INT) ListView_GetItemCount(hList);
+    Item.iImage     = -1;
+    (VOID) ListView_InsertItem(hList, &Item);
+	
+	hDevInfoTypes = SetupDiGetClassDevsEx(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT, NULL, NULL, 0);
+
+    if (hDevInfoTypes == INVALID_HANDLE_VALUE) return;
 
     do
     {
@@ -679,7 +692,7 @@ InitHardWareTypesPage(HWND hwndDlg)
                                      DevDesc,
                                      &DevExist,
                                      &DevImage);
-
+        Index++;
         if ((ClassRet != -1) && (DevExist))
         {
             Item.mask   = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
@@ -700,7 +713,6 @@ InitHardWareTypesPage(HWND hwndDlg)
                 hDevInfoTypes = NULL;
             }
         }
-        Index++;
     }
     while (ClassRet != -1);
 
