@@ -132,6 +132,11 @@ IsConnectedPageDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
+		case WM_INITDIALOG:
+		{
+			SendDlgItemMessage(hwndDlg, IDC_CONNECTED, BM_SETCHECK, BST_CHECKED, 0);
+			SendDlgItemMessage(hwndDlg, IDC_NOTCONNECTED, BM_SETCHECK, BST_UNCHECKED, 0);
+		}
         case WM_COMMAND:
         {
             if(HIWORD(wParam) == BN_CLICKED)
