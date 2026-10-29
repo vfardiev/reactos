@@ -153,4 +153,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Dodaj nowe urządzenie sprzętowe"
     IDS_SELECTWAYTITLE "Kreator pomaga w instalowaniu innego sprzętu"
     IDS_HDTYPESTITLE "Wybierz z poniższej listy typ sprzętu, który chcesz zainstalować"
+	IDS_SHOWALLHW "Show All Devices"
 END

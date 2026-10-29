@@ -144,5 +144,6 @@ BEGIN
     IDS_ADDNEWDEVICE "Добавяне на ново устройство"
     IDS_SELECTWAYTITLE "Магьосникът може да ви помогне при добавянето на друго устройство"
     IDS_HDTYPESTITLE "Изберете от долния списък вида на устройството, което ще инсталирате"
+	IDS_SHOWALLHW "Show All Devices"
 END
 

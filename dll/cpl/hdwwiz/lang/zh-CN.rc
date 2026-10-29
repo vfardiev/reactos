@@ -152,4 +152,5 @@ BEGIN
     IDS_ADDNEWDEVICE "添加新硬件设备"
     IDS_SELECTWAYTITLE "此向导可以帮助您安装其它硬件"
     IDS_HDTYPESTITLE "从以下列表，选择要安装的硬件类型"
+	IDS_SHOWALLHW "Show All Devices"
 END

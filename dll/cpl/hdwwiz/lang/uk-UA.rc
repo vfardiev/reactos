@@ -152,4 +152,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Додати новий пристрій"
     IDS_SELECTWAYTITLE "Цей майстер допоможе встановити інше обладнання"
     IDS_HDTYPESTITLE "Виберіть тип встановлюваного обладнання зі списку"
+	IDS_SHOWALLHW "Show All Devices"
 END

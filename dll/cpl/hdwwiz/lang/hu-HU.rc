@@ -146,4 +146,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Add a new hardware device"
     IDS_SELECTWAYTITLE "The wizard can help you install other hardware"
     IDS_HDTYPESTITLE "From the list below, select the type of hardware you are installing"
+	IDS_SHOWALLHW "Show All Devices"
 END

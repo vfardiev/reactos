@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Aggiungi un nuovo dispositivo hardware"
     IDS_SELECTWAYTITLE "E' possibile installare altro hardware"
     IDS_HDTYPESTITLE "Scegliere dalla lista seguente il tipo di hardware da installare"
+	IDS_SHOWALLHW "Show All Devices"
 END

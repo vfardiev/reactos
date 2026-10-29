@@ -149,4 +149,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Přidat nové hardwarové zařízení"
     IDS_SELECTWAYTITLE "Průvodce vám může pomoci nainstalovat jiný hardware"
     IDS_HDTYPESTITLE "Ze seznamu níže zvolte typ instalovaného hardwaru"
+	IDS_SHOWALLHW "Show All Devices"
 END

@@ -153,4 +153,5 @@ BEGIN
     IDS_ADDNEWDEVICE "新增新的硬體裝置"
     IDS_SELECTWAYTITLE "此精靈可以幫助您安裝其它硬體"
     IDS_HDTYPESTITLE "從以下清單中選擇要安裝的硬體類型"
+	IDS_SHOWALLHW "Show All Devices"
 END

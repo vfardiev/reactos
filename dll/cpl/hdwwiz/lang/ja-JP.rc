@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "新しいハードウェア デバイスを追加"
     IDS_SELECTWAYTITLE "このウィザードは、他のハードウェアのインストールを助けます"
     IDS_HDTYPESTITLE "下のリストからインストールしたいハードウェアの種類を選択して下さい"
+	IDS_SHOWALLHW "Show All Devices"
 END

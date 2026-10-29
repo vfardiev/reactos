@@ -146,4 +146,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Yeni Bir Donanım Aygıtı Ekle"
     IDS_SELECTWAYTITLE "Bu sihirbaz başka donanımları kurmanıza yardımcı olabilir."
     IDS_HDTYPESTITLE "Aşağıdaki listeden kuruyor olduğunuz donanımın türünü seçiniz."
+	IDS_SHOWALLHW "Show All Devices"
 END

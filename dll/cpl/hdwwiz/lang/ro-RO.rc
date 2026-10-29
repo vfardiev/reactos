@@ -153,4 +153,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Adăugarea unui nou dispozitiv hardware"
     IDS_SELECTWAYTITLE "Expertul poate să faciliteze instalarea altor dispozitive hardware"
     IDS_HDTYPESTITLE "Din lista de mai jos, selectaţi tipul de hardware pentru instalare"
+	IDS_SHOWALLHW "Show All Devices"
 END

@@ -148,4 +148,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Shto një pajisje të re hardware"
     IDS_SELECTWAYTITLE "Magjistar mund të ju ndihmojë të instaloni pajisje të tjera"
     IDS_HDTYPESTITLE "Nga lista e meposhtme, zgjidhni llojin e pajisjeve qe jeni duke instaluar"
+	IDS_SHOWALLHW "Show All Devices"
 END

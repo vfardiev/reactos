@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Ein neues Gerät hinzufügen"
     IDS_SELECTWAYTITLE "Der Assistent kann Sie bei der Installation anderer Hardware unterstützen"
     IDS_HDTYPESTITLE "Wählen Sie die Hardware aus der Liste aus, die Sie installieren möchten."
+	IDS_SHOWALLHW "Show All Devices"
 END

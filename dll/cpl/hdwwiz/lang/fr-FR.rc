@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Ajouter un nouveau périphérique matériel"
     IDS_SELECTWAYTITLE "L'assistant peut vous aider à installer d'autres matériels"
     IDS_HDTYPESTITLE "Dans la liste ci-dessous, sélectionnez le type de matériel que vous voulez installer"
+	IDS_SHOWALLHW "Show All Devices"
 END

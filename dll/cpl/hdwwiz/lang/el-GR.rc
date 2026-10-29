@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Προσθήκη μιας νέας συσκευής"
     IDS_SELECTWAYTITLE "Ο οδηγός μπορεί να σας βοηθήσει να εγκαταστήσετε άλλες συσκευές"
     IDS_HDTYPESTITLE "Από την παρακάτω λίστα, επιλέξτε τον τύπο του υλικού που θα εγκαταστήσετε"
+	IDS_SHOWALLHW "Show All Devices"
 END

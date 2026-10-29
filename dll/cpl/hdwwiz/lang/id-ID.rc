@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Tambahkan perangkat keras baru"
     IDS_SELECTWAYTITLE "Penuntun dapat membantu Anda memasang perangkat keras lain"
     IDS_HDTYPESTITLE "Dari daftar di bawah ini, pilih jenis perangkat keras yang Anda pasang"
+	IDS_SHOWALLHW "Show All Devices"
 END

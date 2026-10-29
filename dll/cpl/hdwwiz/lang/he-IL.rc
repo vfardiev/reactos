@@ -146,4 +146,5 @@ BEGIN
     IDS_ADDNEWDEVICE "הוסף התקן חדש"
     IDS_SELECTWAYTITLE "האשף יכול לעזור לך להתקין התקנים אחרים"
     IDS_HDTYPESTITLE "מהרשימה למטה, בחר את סוג ההתקן שאתה רוצה להתקין"
+	IDS_SHOWALLHW "Show All Devices"
 END

@@ -144,4 +144,5 @@ BEGIN
     IDS_ADDNEWDEVICE "Legg til en ny maskinvare enhet"
     IDS_SELECTWAYTITLE "Veiviseren kan hjelpe deg å installere andre maskinvare"
     IDS_HDTYPESTITLE "Fra listen under, velg maskinvare komponenten som du vil installere"
+	IDS_SHOWALLHW "Show All Devices"
 END
