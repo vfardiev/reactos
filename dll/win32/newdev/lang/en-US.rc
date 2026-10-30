@@ -63,10 +63,10 @@ STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYS
 CAPTION "Device installation"
 FONT 8, "MS Shell Dlg"
 BEGIN
-    LTEXT "Select the manufacturer and model of your hardware and then click Next. If you have a disk that contains the driver you want to install, click Install from Disk.", IDC_STATIC, 21, 0, 275, 18
-	CONTROL "Show &compatible hardware", IDC_CHECK_MEDIA, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 21, 31, 180, 8
-    CONTROL "", IDC_DRIVERSLIST, "SysListView32", WS_BORDER | WS_GROUP | WS_TABSTOP | LVS_REPORT | LVS_NOSORTHEADER | LVS_SINGLESEL | LVS_SHAREIMAGELISTS | LVS_NOCOLUMNHEADER, 21, 42, 275, 82
-    PUSHBUTTON "&Install from Disk...", IDC_BROWSE, 216, 129, 80, 14
+    LTEXT "Select the manufacturer and model of your hardware and then click Next. If you have a disk that contains the driver you want to install, click Install from Disk.", IDC_STATIC, 37, 0, 2290, 18
+	CONTROL "Show &compatible hardware", IDC_CHECK_MEDIA, "Button", BS_AUTOCHECKBOX | WS_TABSTOP, 5, 31, 180, 8
+    CONTROL "", IDC_DRIVERSLIST, "SysListView32", WS_BORDER | WS_GROUP | WS_TABSTOP | LVS_REPORT | LVS_NOSORTHEADER | LVS_SINGLESEL | LVS_SHAREIMAGELISTS | LVS_NOCOLUMNHEADER, 5, 42, 307, 82
+    PUSHBUTTON "&Install from Disk...", IDC_BROWSE, 232, 129, 80, 14
 END
 IDD_SEARCHDRV DIALOGEX 0, 0, 317, 143
 STYLE DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU

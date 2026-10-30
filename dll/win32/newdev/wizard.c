@@ -668,7 +668,6 @@ CHSourceDlgProc(
                 BM_SETCHECK,
                 (WPARAM)FALSE,
                 (LPARAM)0);
-
             break;
         }
 
@@ -769,7 +768,10 @@ CHSourceDlgProc(
                     }
                     else
                     {
-                        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_HWTYPESPAGE);
+						/* Handle last radiobutton choose to choose driver manually.
+						   Need to determine flag of installed driver. If no driver show hardware type list,
+						   if driver is installed show driver list by type of current hardware. */
+                        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_HWDRIVERSPAGE);
                     }
                     return TRUE;
 
@@ -1072,7 +1074,7 @@ HWDriversDlgProc(
 				    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_FINISHPAGE);
 					break;
 				case PSN_WIZBACK:
-                    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_HWTYPESPAGE);
+                    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_CHSOURCE);
 					break;
 			}
 			return TRUE;
@@ -1703,7 +1705,7 @@ DisplayWizard(
     psp.pszTemplate = MAKEINTRESOURCE(IDD_CHSOURCE);
     ahpsp[IDD_CHSOURCE-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
 
-    /* Create the Select Type Hardware page */
+    /* Create the Select type hardware page. Skip for test text positions on driver page */
     psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;
     psp.pszHeaderTitle = MAKEINTRESOURCE(IDS_HWTYPES_TITLE);
     psp.pfnDlgProc = CHTypeHWDlgProc;
