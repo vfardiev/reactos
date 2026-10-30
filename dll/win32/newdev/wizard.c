@@ -821,10 +821,6 @@ EnumDeviceClasses(INT ClassIndex,
 
         /* Handle other errors... */
     }
-	
-    /* Get the device image List */
-    ImageListData.cbSize = sizeof(ImageListData);
-    SetupDiGetClassImageList(&ImageListData);
 
     if (SetupDiClassNameFromGuid(&ClassGuid,
                                  ClassName,
@@ -922,7 +918,10 @@ InitHardWareTypesPage(HWND hwndDlg)
 	
 	hDevInfoTypes = SetupDiGetClassDevsEx(NULL, NULL, NULL, DIGCF_ALLCLASSES | DIGCF_PRESENT, NULL, NULL, 0);
 
-    if (hDevInfoTypes == INVALID_HANDLE_VALUE) return;
+    if (hDevInfoTypes == INVALID_HANDLE_VALUE) return;	
+    /* Get the device image List */
+    ImageListData.cbSize = sizeof(ImageListData);
+    SetupDiGetClassImageList(&ImageListData);
 	
     do
     {
@@ -967,6 +966,7 @@ CHTypeHWDlgProc(
 {
 	switch (uMsg)
 	{
+		INT Index;
 		case WM_INITDIALOG:
 		{		
 			InitHardWareTypesPage(hwndDlg);
@@ -985,7 +985,15 @@ CHTypeHWDlgProc(
                     break;
 					
 			    case PSN_WIZNEXT:
-                 /* Handle a Next button click, if necessary */
+                    /* Select Index 0 drop to choose driver page, others are finish wizard*/
+				    Index = (INT) SendMessage(GetDlgItem(hwndDlg, IDC_HWTYPESLIST), LVM_GETNEXTITEM, -1, LVNI_FOCUSED);
+                    if (Index == -1) Index = 0;
+
+                    if (Index == 0)
+                    {
+                        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_HWDRIVERSPAGE);
+                    }
+                    else
 				    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_FINISHPAGE);
 					break;
 				case PSN_WIZBACK:
@@ -998,6 +1006,79 @@ CHTypeHWDlgProc(
 		}
 		
 	}
+return FALSE;
+}
+
+static VOID
+InitDriversPage(HWND hwndDlg)
+{
+	HWND hList = GetDlgItem(hwndDlg, IDC_DRIVERSLIST);
+	WCHAR FirstStr[MAX_STR_SIZE]; 
+	LV_COLUMN Column;
+    LV_ITEM Item;
+    RECT Rect;
+	
+	if (!hList) return;
+
+    ZeroMemory(&Column, sizeof(LV_COLUMN));
+
+    GetClientRect(hList, &Rect);
+
+    Column.mask         = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+    Column.fmt          = LVCFMT_LEFT;
+    Column.iSubItem     = 0;
+    Column.pszText      = NULL;
+    Column.cx           = Rect.right - GetSystemMetrics(SM_CXVSCROLL);
+    (VOID) ListView_InsertColumn(hList, 0, &Column);
+
+    ZeroMemory(&Item, sizeof(LV_ITEM));
+	
+	LoadStringW(hDllInstance, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
+
+    Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
+    Item.pszText    = (LPWSTR) FirstStr;
+    Item.iItem      = (INT) ListView_GetItemCount(hList);
+    Item.iImage     = -1;
+	(VOID) ListView_InsertItem(hList, &Item);	
+}
+
+static INT_PTR CALLBACK
+HWDriversDlgProc(
+    IN HWND hwndDlg,
+    IN UINT uMsg,
+    IN WPARAM wParam,
+    IN LPARAM lParam)
+{
+	switch (uMsg)
+	{
+	case WM_INITDIALOG:
+		{
+			InitDriversPage(hwndDlg);
+		}
+		break;
+    case WM_NOTIFY:
+		{
+			LPNMHDR lpnm = (LPNMHDR)lParam;
+
+            switch (lpnm->code)
+			{
+			    case PSN_SETACTIVE:
+                    /* Enable the Next and Back buttons */
+                    PropSheet_SetWizButtons(GetParent(hwndDlg), PSWIZB_NEXT | PSWIZB_BACK);
+                    break;
+					
+			    case PSN_WIZNEXT:
+				    
+				    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_FINISHPAGE);
+					break;
+				case PSN_WIZBACK:
+                    SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, IDD_HWTYPESPAGE);
+					break;
+			}
+			return TRUE;
+		default: break;
+		}
+	}	
 return FALSE;
 }
 
@@ -1629,7 +1710,14 @@ DisplayWizard(
     psp.pszTemplate = MAKEINTRESOURCE(IDD_HWTYPESPAGE);
     ahpsp[IDD_HWTYPESPAGE-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
 
-    /* Create the Search driver page */
+    /* Create the Choose driver page */
+	psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;
+	psp.pszHeaderTitle = MAKEINTRESOURCE(IDS_HWDRIVERS_TITLE);
+	psp.pfnDlgProc = HWDriversDlgProc;
+	psp.pszTemplate = MAKEINTRESOURCE(IDD_HWDRIVERSPAGE);
+	ahpsp[IDD_HWDRIVERSPAGE-IDD_FIRSTPAGE] = CreatePropertySheetPage(&psp);
+	
+	/* Create the Search driver page */
     psp.dwFlags = PSP_DEFAULT | PSP_USEHEADERTITLE | PSP_USETITLE;
     psp.pszHeaderTitle = MAKEINTRESOURCE(IDS_SEARCHDRV_TITLE);
     psp.pfnDlgProc = SearchDrvDlgProc;
