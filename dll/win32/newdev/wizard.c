@@ -888,7 +888,7 @@ InitHardWareTypesPage(HWND hwndDlg)
 {
     HWND hList = GetDlgItem(hwndDlg, IDC_HWTYPESLIST);
     WCHAR DevName[MAX_STR_SIZE],DevDesc[MAX_STR_SIZE],
-          FirstStr[MAX_STR_SIZE];
+          strBuffer[MAX_STR_SIZE];
     BOOL DevExist = FALSE;
     INT ClassRet, DevImage, Index = 0;
     LV_COLUMN Column;
@@ -910,10 +910,10 @@ InitHardWareTypesPage(HWND hwndDlg)
 
     ZeroMemory(&Item, sizeof(LV_ITEM));
     
-	LoadString(hDllInstance, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
+	LoadString(hDllInstance, IDS_SHOWALLHW, strBuffer, sizeof(strBuffer)/ sizeof(WCHAR));
 
     Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
-    Item.pszText    = (LPWSTR) FirstStr;
+    Item.pszText    = (LPWSTR) strBuffer;
     Item.iItem      = (INT) ListView_GetItemCount(hList);
     Item.iImage     = -1;
     (VOID) ListView_InsertItem(hList, &Item);
@@ -1015,7 +1015,7 @@ static VOID
 InitDriversPage(HWND hwndDlg)
 {
 	HWND hList = GetDlgItem(hwndDlg, IDC_DRIVERSLIST);
-	WCHAR FirstStr[MAX_STR_SIZE]; 
+	WCHAR strBuffer[MAX_STR_SIZE]; 
 	LV_COLUMN Column;
     LV_ITEM Item;
     RECT Rect;
@@ -1035,10 +1035,10 @@ InitDriversPage(HWND hwndDlg)
 
     ZeroMemory(&Item, sizeof(LV_ITEM));
 	
-	LoadStringW(hDllInstance, IDS_SHOWALLHW, FirstStr, sizeof(FirstStr)/ sizeof(WCHAR));
+	LoadStringW(hDllInstance, IDS_SHOWALLHW, strBuffer, sizeof(strBuffer)/ sizeof(WCHAR));
 
     Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
-    Item.pszText    = (LPWSTR) FirstStr;
+    Item.pszText    = (LPWSTR) strBuffer;
     Item.iItem      = (INT) ListView_GetItemCount(hList);
     Item.iImage     = -1;
 	(VOID) ListView_InsertItem(hList, &Item);	
@@ -1058,6 +1058,30 @@ HWDriversDlgProc(
 			InitDriversPage(hwndDlg);
 		}
 		break;
+	case WM_COMMAND:
+	    {
+        switch (LOWORD(wParam))
+		    {
+			case IDC_FROMDISK:
+			    {
+					wchar_t strBuffer[MAX_STR_SIZE];
+					wchar_t PathBuffer[MAX_STR_SIZE];
+					DWORD PathBufferSize = 255;
+					
+					LoadStringW(hDllInstance, IDS_FROM_DISK_TITLE, strBuffer, sizeof(strBuffer)/ sizeof(WCHAR));
+					
+			        SetupPromptForDiskW(hwndDlg,
+			                            strBuffer,
+							        	L"DiskName",
+								        L"C:\\",
+								        L"Setup.inf",
+								        NULL, 0,
+							        	PathBuffer,
+							        	PathBufferSize,
+							        	&PathBufferSize);
+			    }					
+		    }	
+		}			
     case WM_NOTIFY:
 		{
 			LPNMHDR lpnm = (LPNMHDR)lParam;
