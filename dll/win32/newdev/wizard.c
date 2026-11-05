@@ -1067,18 +1067,21 @@ HWDriversDlgProc(
 					wchar_t strBuffer[MAX_STR_SIZE];
 					wchar_t PathBuffer[MAX_STR_SIZE];
 					DWORD PathBufferSize = 255;
-					
+					DWORD PathRequiredSize = 255;
 					LoadStringW(hDllInstance, IDS_FROM_DISK_TITLE, strBuffer, sizeof(strBuffer)/ sizeof(WCHAR));
 					
+					/*IDF_OEMDISK DiskPromptStyle from setupapi need to avoid changing params in "promptdisk_init".
+					When installing a driver from disk Device Manager doesn't require "DiskName" label*/
 			        SetupPromptForDiskW(hwndDlg,
-			                            strBuffer,
-							        	L"DiskName",
-								        L"C:\\",
-								        L"Setup.inf",
-								        NULL, 0,
+			                            strBuffer,    /*Title of Dlg window*/
+							        	L"",          /*DiskName*/
+								        L"C:\\",      /*PathToSource*/
+								        L"*.inf",     /*FileSought*/
+								        NULL,         /*TagFile*/
+										IDF_OEMDISK,  /*DiskPromptStyle*/
 							        	PathBuffer,
 							        	PathBufferSize,
-							        	&PathBufferSize);
+							        	&PathRequiredSize);
 			    }					
 		    }	
 		}			
