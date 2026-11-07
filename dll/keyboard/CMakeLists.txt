@@ -29,6 +29,8 @@ list(APPEND _keyboard_layouts
     kbddv
     kbdeo
     kbdest
+    kbdfa
+    kbdfar
     kbdfc
     kbdfi
     kbdfo
@@ -106,7 +108,12 @@ foreach(_keyboard_layout ${_keyboard_layouts})
         ${CMAKE_CURRENT_BINARY_DIR}/${_keyboard_layout}.def)
 
     set_entrypoint(${_keyboard_layout} 0)
-    set_image_base(${_keyboard_layout} 0x5FFF0000)
+    if(ARCH STREQUAL "arm64")
+        # ARM64 images must be based above 4GB
+        set_image_base(${_keyboard_layout} 0x180000000)
+    else()
+        set_image_base(${_keyboard_layout} 0x5FFF0000)
+    endif()
     set_subsystem(${_keyboard_layout} native)
 
     if(MSVC)
