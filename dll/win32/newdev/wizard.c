@@ -1012,9 +1012,9 @@ return FALSE;
 }
 
 static VOID
-InitDriversPage(HWND hwndDlg)
+InitDevicesPage(HWND hwndDlg)
 {
-	HWND hList = GetDlgItem(hwndDlg, IDC_DRIVERSLIST);
+	HWND hList = GetDlgItem(hwndDlg, IDC_DEVICESLIST);
 	WCHAR strBuffer[MAX_STR_SIZE]; 
 	LV_COLUMN Column;
     LV_ITEM Item;
@@ -1025,11 +1025,48 @@ InitDriversPage(HWND hwndDlg)
     ZeroMemory(&Column, sizeof(LV_COLUMN));
 
     GetClientRect(hList, &Rect);
+	
+	LoadString(hDllInstance, IDS_MODEL, strBuffer, sizeof(strBuffer) / sizeof(WCHAR));
 
     Column.mask         = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
     Column.fmt          = LVCFMT_LEFT;
     Column.iSubItem     = 0;
-    Column.pszText      = NULL;
+    Column.pszText      = (LPWSTR) strBuffer;
+    Column.cx           = Rect.right - GetSystemMetrics(SM_CXVSCROLL);
+    (VOID) ListView_InsertColumn(hList, 0, &Column);
+
+    ZeroMemory(&Item, sizeof(LV_ITEM));
+	
+	LoadStringW(hDllInstance, IDS_SHOWALLHW, strBuffer, sizeof(strBuffer)/ sizeof(WCHAR));
+
+    Item.mask       = LVIF_TEXT | LVIF_PARAM | LVIF_STATE | LVIF_IMAGE;
+    Item.pszText    = (LPWSTR) strBuffer;
+    Item.iItem      = (INT) ListView_GetItemCount(hList);
+    Item.iImage     = -1;
+	(VOID) ListView_InsertItem(hList, &Item);	
+}
+
+static VOID
+InitManufacturersPage(HWND hwndDlg)
+{
+	HWND hList = GetDlgItem(hwndDlg, IDC_DEVICESLIST);
+	WCHAR strBuffer[MAX_STR_SIZE]; 
+	LV_COLUMN Column;
+    LV_ITEM Item;
+    RECT Rect;
+	
+	if (!hList) return;
+
+    ZeroMemory(&Column, sizeof(LV_COLUMN));
+
+    GetClientRect(hList, &Rect);
+	
+	LoadString(hDllInstance, IDS_MANUFACTURER, strBuffer, sizeof(strBuffer) / sizeof(WCHAR));
+
+    Column.mask         = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+    Column.fmt          = LVCFMT_LEFT;
+    Column.iSubItem     = 0;
+    Column.pszText      = (LPWSTR) strBuffer;
     Column.cx           = Rect.right - GetSystemMetrics(SM_CXVSCROLL);
     (VOID) ListView_InsertColumn(hList, 0, &Column);
 
@@ -1054,9 +1091,16 @@ HWDriversDlgProc(
 	switch (uMsg)
 	{
 	case WM_INITDIALOG:
-		{
-			InitDriversPage(hwndDlg);
-		}
+	    {
+			SendDlgItemMessage(hwndDlg, IDC_CHECK_COMPAT, BM_SETCHECK, (WPARAM)TRUE, (LPARAM)0);
+            
+            if (SendDlgItemMessage(hwndDlg, IDC_CHECK_COMPAT, BM_GETCHECK, (WPARAM)0, (LPARAM)0) == BST_CHECKED)
+            {
+				InitDevicesPage(hwndDlg);
+			}
+			else
+			    InitManufacturersPage(hwndDlg);	
+	    }
 		break;
 	case WM_COMMAND:
 	    {

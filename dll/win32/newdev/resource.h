@@ -18,7 +18,11 @@
 #define IDC_COMBO_PATH       2010
 #define IDC_FINISHTITLE      2011
 #define IDC_HWTYPESLIST      2012
-#define IDC_DRIVERSLIST      2013
+#define IDC_DEVICESLIST      2013
+#define IDC_MANUFACTURERSLIST 2014
+#define IDC_FROMDISK         2015
+#define IDC_CHECK_COMPAT     2016
+
 
 #define IDD_WELCOMEPAGE   200
 #define IDD_CHSOURCE      201
@@ -42,3 +46,7 @@
 #define IDS_HWTYPES_TITLE      1006
 #define IDS_HWDRIVERS_TITLE    1006
 #define IDS_SHOWALLHW          1008
+#define IDS_FROMDISK_TITLE     1009
+#define IDS_FROM_DISK_TITLE    1010
+#define IDS_MODEL              1011
+#define IDS_MANUFACTURER       1012
